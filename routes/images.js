@@ -51,4 +51,16 @@ router.get('/getImage/:imageId', (req, res) => {
     })
 })
 
+router.post('/deleteImage/:imageId', auth.isAuthenticated, (req, res) => {
+    const imageId = req.params.imageId;
+    MongoClient.connect(constants.DB_URL, { useNewUrlParser: true }, (err, db) => {
+        if (err) throw err;
+        const dbo = db.db(constants.DB_NAME);
+        dbo.collection('images').deleteOne({"_id" : ObjectId(imageId)}, (err, res) => {
+            if (err) throw err;
+        })
+        return res.status(200).json({ message: 'Image deleted successfully' });
+    })
+})
+
 module.exports = router;
